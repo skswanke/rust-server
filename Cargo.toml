@@ -1,0 +1,6 @@
+[package]
+name = "hello"
+version = "0.1.0"
+authors = ["Sam Swanke <Samuel.Swanke@dealertrack.com>"]
+
+[dependencies]
