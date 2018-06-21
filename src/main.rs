@@ -22,24 +22,13 @@ fn main() {
     println!("Shutting down");
 }
 
-struct Status {
-    ok: &'static str,
-    not_found: &'static str 
+enum Status {
+    Ok,
+    NotFound 
 }
-
-impl Status {
-    fn new() -> Status {
-        Status {
-            ok: "HTTP/1.1 200 OK\r\n\r\n",
-            not_found: "HTTP/1.1 404 NOT FOUND\r\n\r\n"
-        }
-    }
-}
-
 
 fn handle_connection(mut stream: TcpStream) {
     let mut buffer = [0; 512];
-    let http_status = Status::new();
 
     stream.read(&mut buffer).unwrap();
 
@@ -47,22 +36,26 @@ fn handle_connection(mut stream: TcpStream) {
     let sleep = b"GET /sleep HTTP/1.1\r\n";
 
     let response = if buffer.starts_with(get) {
-        get_response(http_status.ok, "hello.html")
+        get_response(Status::Ok, "hello.html")
     } else if buffer.starts_with(sleep) {
         thread::sleep(Duration::from_secs(5));
-        get_response(http_status.not_found, "hello.html")
+        get_response(Status::NotFound, "hello.html")
     } else {
-        get_response(http_status.ok, "404.html")
+        get_response(Status::Ok, "404.html")
     };
 
     stream.write(response.as_bytes()).unwrap();
     stream.flush().unwrap();
 }
 
-fn get_response(status_line: &str, filename: &str) -> String {
+fn get_response(status: Status, filename: &str) -> String {
         let mut file = File::open(filename).unwrap();
         let mut contents = String::new();
         file.read_to_string(&mut contents).unwrap();
+        let status_line = match status {
+            Status::Ok => "HTTP/1.1 200 OK\r\n\r\n",
+            Status::NotFound => "HTTP/1.1 404 NOT FOUND\r\n\r\n",
+        };
 
         let response = format!("{}{}", status_line, contents);
     
