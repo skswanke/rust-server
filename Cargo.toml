@@ -1,6 +1,6 @@
 [package]
-name = "hello"
+name = "server"
 version = "0.1.0"
-authors = ["Sam Swanke <Samuel.Swanke@dealertrack.com>"]
+authors = ["Sam Swanke <skswanke@gmail.com>"]
 
 [dependencies]

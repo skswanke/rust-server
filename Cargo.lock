@@ -1,4 +1,4 @@
 [[package]]
-name = "hello"
+name = "server"
 version = "0.1.0"
 
